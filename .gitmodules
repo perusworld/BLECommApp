@@ -1,0 +1,3 @@
+[submodule "BLECommJ"]
+	path = BLECommJ
+	url = https://github.com/perusworld/BLECommJ.git
