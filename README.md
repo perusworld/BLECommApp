@@ -1,5 +1,5 @@
 # BLECommApp
-Sample application using the BLECommJ Library
+Sample application using the [BLECommJ](https://github.com/perusworld/BLECommJ) Library
 
 ## Node.js implementation
 Looking to do communications betweeen your Android app and your Node.js application running on say Raspberry PI, use [nodeblecomm](https://github.com/perusworld/nodeblecomm)
