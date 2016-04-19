@@ -9,6 +9,10 @@ The easiest way to include the library in your project is to through git submodu
 * in your project's settings.gradle add the following to the include
   * 'BLECommApp:blecommj'
 
+### Getting updates
+ To get the latest updates just run the following command
+ * git submodule update 
+
 ## Node.js implementation
 Looking to do communications betweeen your Android app and your Node.js application running on say Raspberry PI, use [nodeblecomm](https://github.com/perusworld/nodeblecomm)
 
