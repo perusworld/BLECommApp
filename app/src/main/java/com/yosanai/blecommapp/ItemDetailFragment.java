@@ -1,10 +1,9 @@
 package com.yosanai.blecommapp;
 
 import android.app.Activity;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,18 +11,12 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 
-import com.yosanai.blecommapp.dummy.DummyContent;
 import com.yosanai.blecommj.BLEComm;
 import com.yosanai.blecommj.BLECommCallback;
 import com.yosanai.blecommj.BLECommConfig;
 import com.yosanai.blecommj.BLECommConfigBuilder;
-import com.yosanai.blecommj.BLEObject;
 import com.yosanai.blecommj.DefaultBLEComm;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * A fragment representing a single Item detail screen.
