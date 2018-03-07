@@ -128,7 +128,7 @@ public class ItemDetailFragment extends Fragment {
         ListView msgsView = (ListView) rootView.findViewById(R.id.msgs);
         msgsView.setAdapter(msgs);
 
-        final EditText msg = (EditText)rootView.findViewById(R.id.msg);
+        final EditText msg = (EditText) rootView.findViewById(R.id.msg);
 
         ((Button) rootView.findViewById(R.id.btnSend)).setOnClickListener(new View.OnClickListener() {
             @Override

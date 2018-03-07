@@ -3,6 +3,7 @@ package com.yosanai.blecommapp;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.yosanai.blecommj.BLEObject;
+import com.yosanai.blecommj.BLEPermissions;
 import com.yosanai.blecommj.BLEScan;
 import com.yosanai.blecommj.BLEScanCallback;
 
@@ -32,12 +34,14 @@ import java.util.List;
 public class ItemListActivity extends AppCompatActivity {
 
     private static final long SCAN_PERIOD = 5000;
+    BLEScan bleScan;
+    SimpleItemRecyclerViewAdapter adapter;
+    BLEPermissions blePermissions = new BLEPermissions();
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
      * device.
      */
     private boolean mTwoPane;
-    BLEScan bleScan;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,34 +56,16 @@ public class ItemListActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "Starting scan again", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+                checkAndDoScan();
             }
         });
 
         View recyclerView = findViewById(R.id.item_list);
         assert recyclerView != null;
-        bleScan = new BLEScan();
-        if (!bleScan.init(this, BLEScan.getUUID("fff0"))) {
-            finish();
-        }
-        final SimpleItemRecyclerViewAdapter adapter = new SimpleItemRecyclerViewAdapter(new ArrayList<BLEObject>());
+        adapter = new SimpleItemRecyclerViewAdapter(new ArrayList<BLEObject>());
         ((RecyclerView) recyclerView).setAdapter(adapter);
-        bleScan.scan(SCAN_PERIOD, true, new BLEScanCallback() {
-            @Override
-            public void onDone(final Collection<BLEObject> devices) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        adapter.mValues.clear();
-                        for (BLEObject device: devices) {
-                            adapter.mValues.add(device);
-                        }
-                        adapter.notifyDataSetChanged();
-                    }
-                });
-            }
-        });
 
         if (findViewById(R.id.item_detail_container) != null) {
             // The detail container view will be present only in the
@@ -88,6 +74,60 @@ public class ItemListActivity extends AppCompatActivity {
             // activity should be in two-pane mode.
             mTwoPane = true;
         }
+        checkAndDoScan();
+    }
+
+    private void checkAndDoScan() {
+        startScanIf(blePermissions.ensurePermissions(this));
+    }
+
+    private void startScan() {
+        bleScan = new BLEScan();
+        if (!bleScan.init(this, BLEScan.getUUID("fff0"))) {
+            finish();
+        }
+        adapter.mValues.clear();
+        adapter.notifyDataSetChanged();
+        bleScan.scan(SCAN_PERIOD, true, new BLEScanCallback() {
+            @Override
+            public void onDone(final Collection<BLEObject> devices) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter.mValues.clear();
+                        for (BLEObject device : devices) {
+                            adapter.mValues.add(device);
+                        }
+                        adapter.notifyDataSetChanged();
+                    }
+                });
+            }
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        startScanIf(blePermissions.checkResultActivity(this, requestCode, resultCode));
+    }
+
+    private void startScanIf(BLEPermissions.Status status) {
+        switch (status) {
+            case TRUE:
+                startScan();
+                break;
+            case FALSE:
+                //Show error
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        startScanIf(blePermissions.checkRequestPermissionsResult(requestCode, permissions, grantResults));
     }
 
     public class SimpleItemRecyclerViewAdapter
